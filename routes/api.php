@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
@@ -21,10 +22,19 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::post('/updateCategories/{id}', [CourseCategoryController::class, 'updateCategory']);
     Route::post('/deleteCategories/{id}', [CourseCategoryController::class, 'deleteCategory']);
 
-
     Route::post('/courses', [CourseController::class, 'createCourse']);
     Route::get('/courses', [CourseController::class, 'getAllCourses']);
     Route::get('/courses/{id}', [CourseController::class, 'getCourseById']);
     Route::post('/updateCourses/{id}', [CourseController::class, 'updateCourse']);
     Route::post('/deleteCourses/{id}', [CourseController::class, 'deleteCourse']);
+
+    Route::get('/enrollments', [EnrollmentController::class, 'allEnrollments']);
+});
+
+Route::middleware(['auth.jwt', 'role:student'])->group(function () {
+    Route::get('/student/courses', [CourseController::class, 'getAllCourses']);
+    Route::get('/student/courses/{id}', [CourseController::class, 'getCourseById']);
+
+    Route::post('/enroll', [EnrollmentController::class, 'enroll']);
+    Route::get('/student/enrollments', [EnrollmentController::class, 'studentEnrollments']);
 });

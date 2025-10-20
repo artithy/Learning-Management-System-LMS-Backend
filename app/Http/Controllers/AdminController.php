@@ -39,6 +39,7 @@ class AdminController extends Controller
         $payload = [
             'id' => $admin->id,
             'name' => $admin->name,
+            'role' => 'admin',
             'iat' => time(),
             'exp' => time() + 3600,
         ];
@@ -72,6 +73,7 @@ class AdminController extends Controller
         $payload = [
             'id' => $admin->id,
             'name' => $admin->name,
+            'role' => 'admin',
             'iat' => time(),
             'exp' => time() + 3600,
         ];

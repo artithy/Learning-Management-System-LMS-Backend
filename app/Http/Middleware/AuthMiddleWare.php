@@ -35,7 +35,8 @@ class AuthMiddleWare
             }
             $request->attributes->set('auth_user', [
                 'id' => $decode->id,
-                'name' => $decode->name
+                'name' => $decode->name,
+                'role' => $decode->role
             ]);
         } catch (Exception $e) {
             return response()->json([

@@ -41,6 +41,7 @@ class StudentController extends Controller
         $payload = [
             'id' => $student->id,
             'name' => $student->name,
+            'role' => 'student',
             'email' => $student->email,
             'phone' => $student->phone,
             'address' => $student->address,
@@ -82,6 +83,7 @@ class StudentController extends Controller
         $payload = [
             'id' => $student->id,
             'name' => $student->name,
+            'role' => 'student',
             'iat' => time(),
             'exp' => time() + 3600,
         ];

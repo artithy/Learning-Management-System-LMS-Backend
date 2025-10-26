@@ -77,4 +77,11 @@ class CourseCategoryController extends Controller
             'message' => 'Category deleted successfully'
         ]);
     }
+
+    public function getAllCategoryPublic()
+    {
+        return response()->json(
+            CourseCategory::all()
+        );
+    }
 }

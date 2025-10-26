@@ -11,10 +11,17 @@ use App\Http\Controllers\StudentController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-Route::post('/register', [AdminController::class, 'register']);
-Route::post('/login', [AdminController::class, 'login']);
+Route::post('/admin/register', [AdminController::class, 'register']);
+Route::post('/admin/login', [AdminController::class, 'login']);
 Route::post('/student/register', [StudentController::class, 'register']);
 Route::post('/student/login', [StudentController::class, 'login']);
+Route::get('/courses/public', [CourseController::class, 'getAllCoursesPublic']);
+Route::get('/courses/{id}', [CourseController::class, 'getCourseById']);
+Route::get('/courses/public/category/{id}', [CourseController::class, 'getCoursesByCategoryPublic']);
+Route::get('/categories/public', [CourseCategoryController::class, 'getAllCategoryPublic']);
+
+
+
 Route::middleware(['auth.jwt'])->group(function () {
     Route::get('/categories', [CourseCategoryController::class, 'getAllCategory']);
     Route::get('/categories/{id}', [CourseCategoryController::class, 'getCategoryById']);
@@ -24,7 +31,6 @@ Route::middleware(['auth.jwt'])->group(function () {
 
     Route::post('/courses', [CourseController::class, 'createCourse']);
     Route::get('/courses', [CourseController::class, 'getAllCourses']);
-    Route::get('/courses/{id}', [CourseController::class, 'getCourseById']);
     Route::post('/updateCourses/{id}', [CourseController::class, 'updateCourse']);
     Route::post('/deleteCourses/{id}', [CourseController::class, 'deleteCourse']);
 

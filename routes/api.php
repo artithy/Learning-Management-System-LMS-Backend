@@ -11,16 +11,16 @@ use App\Http\Controllers\StudentController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
 Route::post('/admin/register', [AdminController::class, 'register']);
 Route::post('/admin/login', [AdminController::class, 'login']);
 Route::post('/student/register', [StudentController::class, 'register']);
 Route::post('/student/login', [StudentController::class, 'login']);
+
 Route::get('/courses/public', [CourseController::class, 'getAllCoursesPublic']);
 Route::get('/courses/{id}', [CourseController::class, 'getCourseById']);
 Route::get('/courses/public/category/{id}', [CourseController::class, 'getCoursesByCategoryPublic']);
 Route::get('/categories/public', [CourseCategoryController::class, 'getAllCategoryPublic']);
-
-
 
 Route::middleware(['auth.jwt'])->group(function () {
     Route::get('/categories', [CourseCategoryController::class, 'getAllCategory']);
@@ -43,4 +43,10 @@ Route::middleware(['auth.jwt', 'role:student'])->group(function () {
 
     Route::post('/enroll', [EnrollmentController::class, 'enroll']);
     Route::get('/student/enrollments', [EnrollmentController::class, 'studentEnrollments']);
+
+    Route::get('/student/profile', [StudentController::class, 'profile']);
+    Route::post('/student/profile', [StudentController::class, 'updateProfile']);
+
+    Route::post('/create_payment', [EnrollmentController::class, 'createPayment']);
+    Route::get('/verify-payment', [EnrollmentController::class, 'verifyPayment']);
 });

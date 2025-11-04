@@ -95,4 +95,49 @@ class StudentController extends Controller
             'token' => $jwt,
         ]);
     }
+
+    public function profile(Request $request)
+    {
+        $auth = $request->attributes->get('auth_user');
+        $student = Student::find($auth['id']);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Profile fetched',
+            'student' => $student
+        ]);
+    }
+
+
+
+
+    public function updateProfile(Request $request)
+    {
+        $auth = $request->attributes->get('auth_user');
+        $student = Student::find($auth['id']);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $student->update($request->only([
+            'name',
+            'phone',
+            'address',
+            'dob',
+            'gender'
+        ]));
+
+        return response()->json([
+            'message' => 'Profile Updated',
+            'Student' => $student
+        ]);
+    }
 }

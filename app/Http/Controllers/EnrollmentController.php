@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseModel;
 use App\Models\enrollment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class EnrollmentController extends Controller
 {
@@ -213,6 +215,74 @@ class EnrollmentController extends Controller
             'message' => 'Payment not successful',
             'payment_status' => $status,
             'api_response' => $data
+        ]);
+    }
+
+    public function dashboardStats()
+    {
+        $today = Carbon::today();
+        $enrollmentToday = enrollment::whereDate('created_at', $today)->count();
+        $paymentToday = enrollment::whereData('created_at', $today)
+            ->where('payment_status', 'completed')
+            ->Count();
+        $acceptEnrollment = enrollment::where('payment_status', 'completed')->count();
+        $totalPayment = enrollment::sum('payment_transaction_id');
+
+        return response()->json([
+            'enrollment_today' => $enrollmentToday,
+            'payment_today' => $paymentToday,
+            'accepted_enrollment' => $acceptEnrollment,
+            'total_payment' => $totalPayment,
+        ]);
+    }
+
+    public function enrollmentsByDays()
+    {
+        $result = enrollment::select(
+            DB::raw('DATE(created_at) as day'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->where('created_at', '>=', Carbon::today()->subDays(6))
+            ->groupBy(DB::raw('DATE(created_at'))
+            ->orderBy('day', 'ASC')
+            ->get();
+
+        $labels = [];
+        $data = [];
+
+        foreach ($result as $row) {
+            $labels[] = Carbon::parse($row->day)->format('D');
+            $data[] = (int)$row->total;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+    public function enrollmentsByHours()
+    {
+        $result = enrollment::select(
+            DB::raw('HOUR(created_at) as hour'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereData('created_at', Carbon::today())
+            ->groupBy(DB::raw('HOUR(created_ar'))
+            ->orderBy('hour', 'ASC')
+            ->get();
+
+        $labels = [];
+        $data = [];
+
+        foreach ($result as $row) {
+            $labels[] = $row->hour . ":00";
+            $data[] = (int)$row->total;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
         ]);
     }
 }

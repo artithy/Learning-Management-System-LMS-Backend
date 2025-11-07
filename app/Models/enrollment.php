@@ -15,6 +15,7 @@ class enrollment extends Model
         'payment_status',
         'payment_method',
         'payment_transaction_id',
+        'amount',
     ];
 
     public function student()

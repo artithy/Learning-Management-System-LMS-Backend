@@ -33,7 +33,8 @@ class EnrollmentController extends Controller
             'course_id' => $request->course_id,
             'payment_status' => 'completed',
             'payment_method' => $request->payment_method,
-            'payment_transaction_id' => $request->payment_transaction_id
+            'payment_transaction_id' => $request->payment_transaction_id,
+            'amount' => $request->amount ?? 0,
         ]);
 
         return response()->json([
@@ -195,9 +196,10 @@ class EnrollmentController extends Controller
                 enrollment::create([
                     'student_id' => $student_id,
                     'course_id' => $courseId,
-                    'payment_status' => 'complete',
+                    'payment_status' => 'completed',
                     'payment_method' => 'Portpos',
                     'payment_transaction_id' => $invoiceId,
+                    'amount' => $data['data']['order']['amount'] ?? 0,
                 ]);
             }
 
@@ -222,12 +224,11 @@ class EnrollmentController extends Controller
     {
         $today = Carbon::today();
         $enrollmentToday = enrollment::whereDate('created_at', $today)->count();
-        $paymentToday = enrollment::whereData('created_at', $today)
+        $paymentToday = enrollment::whereDate('created_at', $today)
             ->where('payment_status', 'completed')
-            ->Count();
+            ->count();
         $acceptEnrollment = enrollment::where('payment_status', 'completed')->count();
-        $totalPayment = enrollment::sum('payment_transaction_id');
-
+        $totalPayment = enrollment::where('payment_status', 'completed')->sum('amount');
         return response()->json([
             'enrollment_today' => $enrollmentToday,
             'payment_today' => $paymentToday,
@@ -243,7 +244,7 @@ class EnrollmentController extends Controller
             DB::raw('COUNT(*) as total')
         )
             ->where('created_at', '>=', Carbon::today()->subDays(6))
-            ->groupBy(DB::raw('DATE(created_at'))
+            ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy('day', 'ASC')
             ->get();
 
@@ -267,8 +268,8 @@ class EnrollmentController extends Controller
             DB::raw('HOUR(created_at) as hour'),
             DB::raw('COUNT(*) as total')
         )
-            ->whereData('created_at', Carbon::today())
-            ->groupBy(DB::raw('HOUR(created_ar'))
+            ->whereDate('created_at', Carbon::today())
+            ->groupBy(DB::raw('HOUR(created_at)'))
             ->orderBy('hour', 'ASC')
             ->get();
 

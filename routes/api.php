@@ -50,3 +50,6 @@ Route::middleware(['auth.jwt', 'role:student'])->group(function () {
     Route::post('/create_payment', [EnrollmentController::class, 'createPayment']);
     Route::get('/verify-payment', [EnrollmentController::class, 'verifyPayment']);
 });
+Route::get('/dashboard-stats', [EnrollmentController::class, 'dashboardStats']);
+Route::get('/enrollments-by-days', [EnrollmentController::class, 'enrollmentsByDays']);
+Route::get('/enrollments-by-hours', [EnrollmentController::class, 'enrollmentsByHours']);

@@ -55,7 +55,7 @@ class StudentController extends Controller
         return response()->json([
             'message' => 'User registered successfully',
             'student' => $student,
-            'tokeb' => $jwt,
+            'token' => $jwt,
         ]);
     }
 
@@ -83,10 +83,14 @@ class StudentController extends Controller
         $payload = [
             'id' => $student->id,
             'name' => $student->name,
+            'email' => $student->email,
+            'phone' => $student->phone,
+            'address' => $student->address,
             'role' => 'student',
             'iat' => time(),
             'exp' => time() + 3600,
         ];
+
         $jwt = JWT::encode($payload, $secretKey, 'HS256');
 
         return response()->json([

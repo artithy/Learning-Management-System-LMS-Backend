@@ -89,13 +89,16 @@ class EnrollmentController extends Controller
 
             $appKey    = "";
             $secretKey = "";
-            $bearerToken = "Bearer " . base64_encode($appKey . ":" . md5($secretKey . time()));
+            $bearerToken = "Bearer " . base64_encode(
+                $appKey . ":" . md5($secretKey . time())
+            );
 
             $data = [
                 "order" => [
                     "amount" => (float) $request->amount,
                     "currency" => "BDT",
-                    "redirect_url" => "http://localhost:5074/student/payment-success?invoice={invoice}&course_id={$courseId}&student_id={$studentId}"
+                    "redirect_url" => "http://localhost:5074/student/payment-success?course_id={$courseId}&student_id={$studentId}"
+
                 ],
                 "product" => [
                     "name" => $course->title ?? 'Course Purchase',
@@ -119,9 +122,11 @@ class EnrollmentController extends Controller
 
             $response = Http::withHeaders([
                 "Authorization" => $bearerToken,
-                "Content-Type" => "application/json"
-            ])->timeout(120)
-                ->post("https://api-sandbox.portpos.com/payment/v2/invoice", $data);
+                "Content-Type"  => "application/json",
+            ])->post(
+                "https://api-sandbox.portpos.com/payment/v2/invoice",
+                $data
+            );
 
             if ($response->failed()) {
                 return response()->json([
@@ -175,12 +180,18 @@ class EnrollmentController extends Controller
 
         $appKey    = "";
         $secretKey = "";
-        $bearerToken = "Bearer " . base64_encode($appKey . ":" . md5($secretKey . time()));
+
+        $bearerToken = "Bearer " . base64_encode(
+            $appKey . ":" . md5($secretKey . time())
+        );
 
         $response = Http::withHeaders([
             "Authorization" => $bearerToken,
-            "Content-Type" => "application/json"
-        ])->get("https://api-sandbox.portpos.com/payment/v2/invoice/$invoiceId");
+            "Content-Type"  => "application/json",
+        ])->get(
+            "https://api-sandbox.portpos.com/payment/v2/invoice/$invoiceId"
+        );
+
 
         $data = $response->json();
         $status = $data['data']['order']['status'] ?? null;
